@@ -14,54 +14,10 @@ response_type = "in_channel"  # ephemeral
 # Each key/value pair should be in the form of:
 # 'slash_cmd': {'name': 'Display Name', 'image': 'url to image to display'}
 c_map = {
-    'uhl': {
-        'name': "Uhl",
-        'image': "https://s3.amazonaws.com/gt7sp-prod/decal/44/03/79/6917551022387790344_1.png",  # noqa:E501
+    'character_name': {
+        'name': "Display Name",
+        'image': "URI to character image.",  # noqa:E501
     },
-    'jade': {
-        'name': "Jade",
-        'image': "https://orderofsyncletica.files.wordpress.com/2014/02/assassin.jpg?w=768&h=480",  # noqa:E501
-    },
-    'elijah': {
-        'name': "Elijah",
-        'image': "https://media-waterdeep.cursecdn.com/avatars/thumbnails/7/267/1000/1000/636284743262192738.jpeg",  # noqa:E501
-    },
-    'hal': {
-        'name': "Hal",
-        'image': "http://isandir.com/wp-content/uploads/Damen.png",  # noqa:E501
-    },
-    'rvr': {
-        'name': "Rudolph",
-        'image': "https://vignette.wikia.nocookie.net/castlevania/images/0/0a/Abraham_Van_Helsing_-_Anthony_Hopkins_-_01.jpg/revision/latest?cb=20141205103112",  # noqa:E501
-    },
-    'nikolaj': {
-        'name': "Nikolaj",
-        'image': "https://vignette.wikia.nocookie.net/the-cloaks/images/3/36/Berrian_Lackman_Portrait_zpsk530fyq4.png/revision/latest?cb=20170709093418",  # noqa:E501
-    },
-    'strahd': {
-        'name': "Lord Strahd",
-        'image': "https://pbs.twimg.com/profile_images/790396156224217088/jB2kFMlM_400x400.jpg",  # noqa:E501
-    },
-    'ireena': {
-        'name': "Ireena",
-        'image': "https://vignette.wikia.nocookie.net/sundnd/images/6/6e/Ireena.png/revision/latest?cb=20171102201638",  # noqa:E501
-    },
-    'ismark': {
-        'name': "Ismark",
-        'image': "https://vignette.wikia.nocookie.net/mnmh/images/3/36/Ismark_Lesser.jpg/revision/latest?cb=20190118154038",  # noqa:E501
-    },
-    'hakkon': {
-        'name': "Brother Hakkon",
-        'image': "https://cdn.webshopapp.com/shops/32318/files/254957012/600x600x2/medieval-chaperon-walt-black.jpg",  # noqa:E501
-    },
-    'izek': {
-        'name': "Izek",
-        'image': "https://i2-prod.mirror.co.uk/incoming/article429356.ece/ALTERNATES/s615b/nikolai-valuev-pic-getty-images-45880687.jpg",  # noqa:E501
-    },
-    'geri': {
-        'name': "Geri",
-        'image': "https://mcishop.azureedge.net/mciassets/w_3_0034933_chainmail-shirt.png",  # noqa:E501
-    }
 }
 
 
@@ -189,7 +145,7 @@ def post_to_slack(response_url, data):
     )
 
 
-def generate_message(request):
+def generate_message(request, allowed=[]):
     '''Generate the message to send to Slack'''
 
     if not is_request_valid(request):
@@ -199,6 +155,10 @@ def generate_message(request):
     channel = request.form['channel_id']
     response_url = request.form['response_url']
     user = request.form['user_name']
+
+    # Lock down this particular message to specific users.
+    if user not in allowed and 'all' not in allowed:
+        abort(400)
 
     # GM Command is more flexible in the form of `/gm name | message`
     if command == "/gm":
@@ -230,41 +190,14 @@ def generate_message(request):
 # Each one of these is a command we can use in Slack with `/foo`
 
 
-@app.route('/uhl', methods=['POST'])
-def uhl():
-    return generate_message(request)
+@app.route('/character', methods=['POST'])
+def character():
+    '''App route for this character's slash command.
 
+    You need to specify the slack username that is allowed to speak as this
+    character. You can also specify 'all' if you wish to allow anyone to speak
+    as this character.
+    '''
 
-@app.route('/jade', methods=['POST'])
-def jade():
-    return generate_message(request)
-
-
-@app.route('/elijah', methods=['POST'])
-def elijah():
-    return generate_message(request)
-
-
-@app.route('/hal', methods=['POST'])
-def hal():
-    return generate_message(request)
-
-
-@app.route('/rvr', methods=['POST'])
-def rvr():
-    return generate_message(request)
-
-
-@app.route('/nikolaj', methods=['POST'])
-def nikolaj():
-    return generate_message(request)
-
-
-@app.route('/gm', methods=['POST'])
-def gm():
-    return generate_message(request)
-
-
-@app.route('/strahd', methods=['POST'])
-def strahd():
-    return generate_message(request)
+    allowed = ['slack_username']
+    return generate_message(request, allowed=allowed)
