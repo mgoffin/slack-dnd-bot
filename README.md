@@ -19,6 +19,11 @@ This bot allows you to talk "in character" in a Slack channel. Some examples:
 > /gm Bob | Excitedly | Hello, world!
 ```
 
+You can also roll dice! It uses `d20` so see their readthedocs for syntax.
+```
+> /bob roll | 1d20 + 5
+```
+
 The bot allows you to define specific slash commands for each character that you wish, but also has a GM command so the GM can talk as any NPC/Character they wish/need to. Each flash `app.route` is a unique slash command for each character you wish to define, including the GM slash command.
 
 In the file is a `c_map` dictionary which allows you to define any (N)PC you wish and a custom Display Name and image to show up in the Slack message.

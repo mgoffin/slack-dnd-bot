@@ -2,6 +2,7 @@ import json
 import os
 import requests
 
+from d20 import roll
 from flask import abort, Flask, request
 
 
@@ -99,8 +100,14 @@ def generate_accessory(character):
 def generate_text(character, mode, user, msg):
     '''Generate the text to be sent to Slack.'''
 
-    return "*{} Says...{} (from {})*\n{}".format(
-            get_name(character), mode, user, msg)
+    # Special mode checks go here if you want to do something special.
+    if mode.strip() == '[roll]':
+        result = str(roll(msg))
+        return "*{} Rolls... (from {})*\n{}".format(
+                get_name(character), user, result)
+    else:
+        return "*{} Says...{} (from {})*\n{}".format(
+                get_name(character), mode, user, msg)
 
 
 def build_data(channel, text, accessory):
