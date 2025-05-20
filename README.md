@@ -13,12 +13,13 @@ That being said, the character names in the dnd-bot.py file *COULD BE SPOILERS*.
 This bot allows you to talk "in character" in a Slack channel. Some examples:
 
 ```
+> /char -H
 > /char -c Drizzt -m "Hello, world..."
 > /char -c Drizzt -e "Excitedly" -m "Hello, world!"
 > /char -c Drizzt -r "1d20"
 ```
 
-You can also roll dice! It uses `d20` so see their readthedocs for syntax.
+The `-H` will print the help out if you ever need to reference it. You can also roll dice! It uses `d20` so see their readthedocs for syntax.
 ```
 > /char -c Drizzt -e "Defiantly" -m "So be it!" -r "1d20"
 ```
